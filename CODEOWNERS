@@ -1801,6 +1801,8 @@ CLAUDE.md @home-assistant/core
 /tests/components/trafikverket_weatherstation/ @gjohansson-ST
 /homeassistant/components/trane/ @bdraco
 /tests/components/trane/ @bdraco
+/homeassistant/components/transitapp/ @nanodino
+/tests/components/transitapp/ @nanodino
 /homeassistant/components/transmission/ @engrbm87 @JPHutchins @andrew-codechimp
 /tests/components/transmission/ @engrbm87 @JPHutchins @andrew-codechimp
 /homeassistant/components/trend/ @jpbede

@@ -1,0 +1,100 @@
+rules:
+  # Bronze
+  action-setup:
+    status: exempt
+    comment: No service actions are provided by this integration.
+  appropriate-polling: done
+  brands:
+    status: todo
+    comment: >
+      Logo must be added via a pull request to the home-assistant/brands
+      repository.
+  common-modules: done
+  config-flow-test-coverage: done
+  config-flow: done
+  dependency-transparency:
+    status: exempt
+    comment: No PyPI dependencies; the Transit API is accessed via a thin inline client.
+  docs-actions:
+    status: exempt
+    comment: No service actions are provided by this integration.
+  docs-high-level-description:
+    status: todo
+    comment: >
+      Written in the home-assistant/home-assistant.io repository as
+      source/_integrations/transitapp.markdown.
+  docs-installation-instructions:
+    status: todo
+    comment: See docs-high-level-description.
+  docs-removal-instructions:
+    status: todo
+    comment: See docs-high-level-description.
+  entity-event-setup:
+    status: exempt
+    comment: >
+      Entities are CoordinatorEntity subclasses and do not subscribe to
+      integration-external events.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup: done
+  unique-config-entry: done
+
+  # Silver
+  action-exceptions:
+    status: exempt
+    comment: No service actions are provided by this integration.
+  config-entry-unloading: done
+  docs-configuration-parameters: todo
+  docs-installation-parameters: todo
+  entity-unavailable: done
+  integration-owner: done
+  log-when-unavailable: done
+  parallel-updates: todo
+  reauthentication-flow: todo
+  test-coverage: todo
+
+  # Gold
+  devices: done
+  diagnostics: todo
+  discovery-update-info:
+    status: exempt
+    comment: This is a cloud-polling integration and does not use local discovery.
+  discovery:
+    status: exempt
+    comment: This is a cloud-polling integration and does not use local discovery.
+  docs-data-update: todo
+  docs-examples: todo
+  docs-known-limitations: todo
+  docs-supported-devices:
+    status: exempt
+    comment: This integration does not represent physical devices.
+  docs-supported-functions: todo
+  docs-troubleshooting: todo
+  docs-use-cases: todo
+  dynamic-devices: todo
+  entity-category:
+    status: exempt
+    comment: All entities are primary state entities.
+  entity-device-class: done
+  entity-disabled-by-default:
+    status: exempt
+    comment: All entities are expected to be useful out of the box.
+  entity-translations: done
+  exception-translations: todo
+  icon-translations: todo
+  reconfiguration-flow: todo
+  repair-issues:
+    status: exempt
+    comment: No repair flows are applicable to this integration.
+  stale-devices: todo
+
+  # Platinum
+  async-dependency:
+    status: exempt
+    comment: Uses aiohttp directly via the inline client.
+  inject-websession:
+    status: exempt
+    comment: Uses the shared aiohttp session via async_get_clientsession.
+  strict-typing: todo

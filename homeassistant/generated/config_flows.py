@@ -754,6 +754,7 @@ FLOWS = {
         "trafikverket_train",
         "trafikverket_weatherstation",
         "trane",
+        "transitapp",
         "transmission",
         "triggercmd",
         "trmnl",
