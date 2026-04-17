@@ -46,11 +46,11 @@ class TransitAppClient:
             },
         )
 
-    async def async_stop_departures(self, global_stop_id: str) -> dict[str, Any]:
-        """Return upcoming departures for a stop."""
+    async def async_stop_departures(self, global_stop_ids: list[str]) -> dict[str, Any]:
+        """Return upcoming departures for one or more stops in a single call."""
         return await self._async_get(
             f"{API_URL}/public/stop_departures",
-            params={"global_stop_id": global_stop_id},
+            params={"global_stop_ids": ",".join(global_stop_ids)},
         )
 
     async def _async_get(
@@ -67,8 +67,11 @@ class TransitAppClient:
             raise TransitAppConnectionError from err
 
         if response.status in (401, 403):
-            raise TransitAppAuthError
+            raise TransitAppAuthError(f"HTTP {response.status} from {url}")
         if response.status >= 400:
-            raise TransitAppConnectionError
+            body = await response.text()
+            raise TransitAppConnectionError(
+                f"HTTP {response.status} from {url}: {body[:200]}"
+            )
 
         return await response.json()

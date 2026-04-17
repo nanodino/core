@@ -26,7 +26,7 @@ async def async_setup_entry(
     async_add_entities(
         NextDepartureSensor(coordinator, entry, stop_data["stop"], route)
         for stop_data in coordinator.data.values()
-        for route in stop_data["departures"].get("route_departures", [])
+        for route in stop_data["route_departures"]
     )
 
 
@@ -70,7 +70,7 @@ class NextDepartureSensor(CoordinatorEntity[TransitAppCoordinator], SensorEntity
         stop_data = self.coordinator.data.get(self._stop_id)
         if stop_data is None:
             return None
-        for route in stop_data["departures"].get("route_departures", []):
+        for route in stop_data["route_departures"]:
             if route.get("global_route_id") != self._route_id:
                 continue
             for itinerary in route.get("itineraries", []):

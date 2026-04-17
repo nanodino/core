@@ -26,6 +26,11 @@
       "next_departure": {
         "name": "Next {route} departure at {stop}"
       }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh departures"
+      }
     }
   }
 }

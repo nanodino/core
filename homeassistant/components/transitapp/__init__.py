@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_API_KEY, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.const import CONF_API_KEY, EVENT_CORE_CONFIG_UPDATE, Platform
+from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import TransitAppClient
 from .const import CONF_RADIUS
 from .coordinator import TransitAppCoordinator
 
-_PLATFORMS: list[Platform] = [Platform.SENSOR]
+_PLATFORMS: list[Platform] = [Platform.BUTTON, Platform.SENSOR]
 
 type TransitAppConfigEntry = ConfigEntry[TransitAppCoordinator]
 
@@ -28,8 +28,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: TransitAppConfigEntry) -
         entry.data[CONF_RADIUS],
     )
     await coordinator.async_config_entry_first_refresh()
-
     entry.runtime_data = coordinator
+
+    @callback
+    def _handle_core_config_update(event: Event) -> None:
+        """Re-discover nearby stops when the home location changes."""
+        new_location = (hass.config.latitude, hass.config.longitude)
+        if new_location != coordinator.location:
+            coordinator.update_location(*new_location)
+            entry.async_create_task(
+                hass, coordinator.async_request_refresh(), "transitapp_location_update"
+            )
+
+    entry.async_on_unload(
+        hass.bus.async_listen(EVENT_CORE_CONFIG_UPDATE, _handle_core_config_update)
+    )
+
     await hass.config_entries.async_forward_entry_setups(entry, _PLATFORMS)
     return True
 

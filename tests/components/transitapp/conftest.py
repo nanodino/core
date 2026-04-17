@@ -27,6 +27,7 @@ NEARBY_STOPS_RESPONSE = {
 STOP_DEPARTURES_RESPONSE = {
     "route_departures": [
         {
+            "global_stop_id": "stop-1",
             "global_route_id": "route-a",
             "route_short_name": "10",
             "route_long_name": "Downtown Express",
@@ -40,6 +41,7 @@ STOP_DEPARTURES_RESPONSE = {
             ],
         },
         {
+            "global_stop_id": "stop-1",
             "global_route_id": "route-b",
             "route_short_name": "55",
             "route_long_name": "Crosstown",

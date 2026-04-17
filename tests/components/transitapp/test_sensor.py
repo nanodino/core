@@ -33,9 +33,13 @@ async def test_sensor_entities(
     await hass.async_block_till_done()
 
     entity_registry = er.async_get(hass)
-    entries = er.async_entries_for_config_entry(
-        entity_registry, mock_config_entry.entry_id
-    )
+    entries = [
+        e
+        for e in er.async_entries_for_config_entry(
+            entity_registry, mock_config_entry.entry_id
+        )
+        if e.domain == "sensor"
+    ]
     assert len(entries) == 2
     assert {e.unique_id for e in entries} == {
         f"{mock_config_entry.entry_id}_stop-1_route-a",
