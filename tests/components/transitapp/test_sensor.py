@@ -58,3 +58,9 @@ async def test_sensor_entities(
     assert datetime.fromisoformat(state_a.state) == datetime.fromtimestamp(
         1_900_000_000, tz=UTC
     )
+    assert state_a.attributes["stop_name"] == "Main St & 1st Ave"
+    assert state_a.attributes["stop_distance"] == 120
+    assert state_a.attributes["route_short_name"] == "10"
+    assert state_a.attributes["route_long_name"] == "Downtown Express"
+    assert state_a.attributes["headsign"] == "Downtown"
+    assert state_a.attributes["is_real_time"] is True

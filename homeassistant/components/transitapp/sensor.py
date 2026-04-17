@@ -48,14 +48,14 @@ class NextDepartureSensor(CoordinatorEntity[TransitAppCoordinator], SensorEntity
         super().__init__(coordinator)
         self._stop_id: str = stop["global_stop_id"]
         self._route_id: str = route["global_route_id"]
+        self._stop_name: str | None = stop.get("stop_name")
+        self._stop_distance: float | None = stop.get("distance")
+        self._route_short_name: str | None = route.get("route_short_name")
+        self._route_long_name: str | None = route.get("route_long_name")
         self._attr_unique_id = f"{entry.entry_id}_{self._stop_id}_{self._route_id}"
         self._attr_translation_placeholders = {
-            "route": (
-                route.get("route_short_name")
-                or route.get("route_long_name")
-                or self._route_id
-            ),
-            "stop": stop.get("stop_name") or self._stop_id,
+            "route": self._route_short_name or self._route_long_name or self._route_id,
+            "stop": self._stop_name or self._stop_id,
         }
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
@@ -64,18 +64,45 @@ class NextDepartureSensor(CoordinatorEntity[TransitAppCoordinator], SensorEntity
             name="Transit nearby departures",
         )
 
-    @property
-    def native_value(self) -> datetime | None:
-        """Return the next departure time for this stop/route pair."""
+    def _find_next_departure(
+        self,
+    ) -> tuple[datetime, dict[str, Any], dict[str, Any]] | None:
+        """Return (time, itinerary, schedule_item) for the earliest departure."""
         stop_data = self.coordinator.data.get(self._stop_id)
         if stop_data is None:
             return None
+        best: tuple[datetime, dict[str, Any], dict[str, Any]] | None = None
         for route in stop_data["route_departures"]:
             if route.get("global_route_id") != self._route_id:
                 continue
             for itinerary in route.get("itineraries", []):
                 for item in itinerary.get("schedule_items", []):
                     ts = item.get("departure_time")
-                    if ts is not None:
-                        return datetime.fromtimestamp(int(ts), tz=UTC)
-        return None
+                    if ts is None:
+                        continue
+                    dt = datetime.fromtimestamp(int(ts), tz=UTC)
+                    if best is None or dt < best[0]:
+                        best = (dt, itinerary, item)
+        return best
+
+    @property
+    def native_value(self) -> datetime | None:
+        """Return the next departure time for this stop/route pair."""
+        best = self._find_next_departure()
+        return best[0] if best is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Expose route/stop/realtime info for dashboard templating."""
+        attrs: dict[str, Any] = {
+            "stop_name": self._stop_name,
+            "stop_distance": self._stop_distance,
+            "route_short_name": self._route_short_name,
+            "route_long_name": self._route_long_name,
+        }
+        best = self._find_next_departure()
+        if best is not None:
+            _, itinerary, item = best
+            attrs["headsign"] = itinerary.get("headsign")
+            attrs["is_real_time"] = item.get("is_real_time")
+        return attrs
