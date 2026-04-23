@@ -1,9 +1,9 @@
 {
-  "domain": "transitapp",
+  "domain": "transit",
   "name": "Transit",
   "codeowners": ["@nanodino"],
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/transitapp",
+  "documentation": "https://www.home-assistant.io/integrations/transit",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "requirements": []
